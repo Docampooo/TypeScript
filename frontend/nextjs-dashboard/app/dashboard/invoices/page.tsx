@@ -1,4 +1,53 @@
+'use client';
+
 import { lusitana } from '@/app/ui/fonts';
+
+//funciones del raceway!
+
+async function fase1(deviceName: string, duration: number){
+
+  const response = await fetch(`http://193.146.35.221:8000/devices/${deviceName}/fase1?duration=${duration}`, {method:'POST'});
+
+  if(!response.ok){
+    throw new Error("Error al activar la fase 1")
+  }
+}
+
+async function fase2(deviceName: string){
+
+  const response = await fetch(`http://193.146.35.221:8000/devices/${deviceName}/fase2`, {method:'POST'});
+
+  if(!response.ok){
+    throw new Error("Error al activar la fase 2")
+  }
+}
+
+async function fase3(deviceName: string, ){
+
+  const response = await fetch(`http://193.146.35.221:8000/devices/${deviceName}/fase3`, {method:'POST'});
+
+  if(!response.ok){
+    throw new Error("Error al activar la fase 3")
+  }
+}
+
+async function fase4(deviceName: string, ){
+
+  const response = await fetch(`http://193.146.35.221:8000/devices/${deviceName}/fase4`, {method:'POST'});
+
+  if(!response.ok){
+    throw new Error("Error al activar la fase 4")
+  }
+}
+
+async function fase5(deviceName: string, ){
+
+  const response = await fetch(`http://193.146.35.221:8000/devices/${deviceName}/fase5`, {method:'POST'});
+
+  if(!response.ok){
+    throw new Error("Error al activar la fase 5")
+  }
+}
 
 const motorFunctions = [
   {
@@ -10,46 +59,54 @@ const motorFunctions = [
     color: 'from-blue-900 to-blue-700',
     hoverColor: 'hover:from-blue-800 hover:to-blue-600',
     btnColor: 'bg-emerald-500 hover:bg-emerald-400',
+    onClick: () => fase1('Motor', 5),
   },
   {
     id: 2,
-    nombre: 'Parar Motor',
-    descripcion: 'Detiene de forma segura el sistema de bombeo, cerrando válvulas y deteniendo el flujo de agua.',
+    nombre: 'Motor parado, Válvula abierta',
+    descripcion: 'Abre las válvulas de control del sistema hidráulico con el motor parado',
     icono: '■',
     accion: 'Detener',
     color: 'from-blue-950 to-blue-800',
     hoverColor: 'hover:from-blue-900 hover:to-blue-700',
     btnColor: 'bg-red-500 hover:bg-red-400',
+    onClick: () => fase2('Motor'),
   },
   {
     id: 3,
-    nombre: 'Abrir Válvulas',
-    descripcion: 'Abre las válvulas de control del sistema hidráulico para permitir la circulación completa del flujo.',
+    nombre: 'Motor encendido, Válvula abierta',
+    descripcion: 'Abre las válvulas de control del sistema hidráulico para permitir la circulación completa del flujo y activa el motor.',
     icono: '◈',
     accion: 'Abrir',
     color: 'from-blue-900 to-indigo-800',
     hoverColor: 'hover:from-blue-800 hover:to-indigo-700',
     btnColor: 'bg-sky-500 hover:bg-sky-400',
+    onClick: () => fase3('Motor'),
+
   },
   {
     id: 4,
-    nombre: 'Cerrar Válvulas',
+    nombre: 'Cerrar todo',
     descripcion: 'Cierra todas las válvulas del circuito hidráulico para aislar el sistema y prevenir pérdidas.',
     icono: '◉',
     accion: 'Cerrar',
     color: 'from-slate-800 to-blue-900',
     hoverColor: 'hover:from-slate-700 hover:to-blue-800',
     btnColor: 'bg-amber-500 hover:bg-amber-400',
+    onClick: () => fase4('Motor'),
+    
   },
   {
     id: 5,
-    nombre: 'Estado del Sistema',
-    descripcion: 'Consulta el estado actual de todos los componentes: motor, válvulas, presión y nivel de agua.',
+    nombre: 'Encender motor Direccion Opuesta',
+    descripcion: 'El motor se enciende y su movimiento es en sentido contrario',
     icono: '◎',
     accion: 'Consultar',
     color: 'from-blue-800 to-cyan-900',
     hoverColor: 'hover:from-blue-700 hover:to-cyan-800',
     btnColor: 'bg-blue-400 hover:bg-blue-300',
+    onClick: () => fase5('Motor'),
+
   },
 ];
 
@@ -97,6 +154,7 @@ export default function Page() {
 
             {/* Botón */}
             <button
+              onClick={fn.onClick}
               className={`mt-6 w-full rounded-lg ${fn.btnColor} px-4 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 active:scale-95`}
             >
               {fn.accion}
