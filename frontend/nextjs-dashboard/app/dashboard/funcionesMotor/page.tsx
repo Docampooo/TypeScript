@@ -93,8 +93,8 @@ const motorFunctions: FuncionMotor[] = [
   },
   {
     id: 5,
-    nombre: 'Encender motor Direccion Opuesta',
-    descripcion: 'El motor se enciende y su movimiento es en sentido contrario.',
+    nombre: 'Motor sentido contrario',
+    descripcion: 'El motor ya activo gira en sentido contrario.',
     icono: '◎',
     accion: 'Invertir',
     color: 'from-blue-800 to-cyan-900',

@@ -53,7 +53,10 @@ def get_status(device_name: str):
 def fase1(device_name: str, duration: int = 5):
     """Iniciar Motor forward, valvula cerrada."""
     estado["motor"]["encendido"] = True
-    estado["motor"]["direccion"] = "forward"
+    
+    if estado["motor"]["direccion"] is None :
+        estado["motor"]["direccion"] = "forward"
+        
     estado["raceway"]["v2_llenado"] = False
     return {"ok": True, "mensaje": f"Fase 1 activada en {device_name}", "estado": estado}
 
@@ -61,7 +64,6 @@ def fase1(device_name: str, duration: int = 5):
 def fase2(device_name: str):
     """Motor parado, valvula llenado abierta."""
     estado["motor"]["encendido"] = False
-    estado["motor"]["direccion"] = None
     estado["raceway"]["v2_llenado"] = True
     estado["raceway"]["v1_vaciado"] = False
     return {"ok": True, "mensaje": f"Fase 2 activada en {device_name}", "estado": estado}
@@ -70,7 +72,10 @@ def fase2(device_name: str):
 def fase3(device_name: str):
     """Motor encendido, valvula llenado abierta."""
     estado["motor"]["encendido"] = True
-    estado["motor"]["direccion"] = "forward"
+    
+    if estado["motor"]["direccion"] is None :
+        estado["motor"]["direccion"] = "forward"
+        
     estado["raceway"]["v2_llenado"] = True
     return {"ok": True, "mensaje": f"Fase 3 activada en {device_name}", "estado": estado}
 
@@ -78,7 +83,6 @@ def fase3(device_name: str):
 def fase4(device_name: str):
     """Cerrar todo."""
     estado["motor"]["encendido"] = False
-    estado["motor"]["direccion"] = None
     estado["raceway"]["v1_vaciado"] = False
     estado["raceway"]["v2_llenado"] = False
     estado["deposito"]["v3_entrada"] = False
@@ -91,7 +95,12 @@ def fase4(device_name: str):
 def fase5(device_name: str):
     """Motor backward."""
     estado["motor"]["encendido"] = True
-    estado["motor"]["direccion"] = "backward"
+    
+    if estado["motor"]["direccion"] == "forward" or estado["motor"]["direccion"] is None :
+        estado["motor"]["direccion"] = "backward"
+    else:
+        estado["motor"]["direccion"] = "forward"
+
     return {"ok": True, "mensaje": f"Fase 5 activada en {device_name}", "estado": estado}
 
 

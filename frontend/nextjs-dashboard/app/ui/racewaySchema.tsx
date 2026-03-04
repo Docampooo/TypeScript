@@ -4,9 +4,12 @@ import { useEffect, useState } from 'react';
 import { lusitana } from '@/app/ui/fonts';
 
 const BASE_URL = 'http://127.0.0.1:3333';
+// const BASE_URL = 'http://193.146.35.221:8000';
+
 const DEVICE = 'Motor';
 const INTERVALO_MS = 1000;
 
+//Comunicacion con la API
 type Estado = {
   motor: { encendido: boolean; direccion: string | null };
   raceway: { nivel_agua: number; n1_minimo: boolean; n2_maximo: boolean; v1_vaciado: boolean; v2_llenado: boolean };
@@ -117,6 +120,8 @@ export default function RacewaySchema() {
     await toggleValvula(valvula, !estadoActual);
   };
 
+
+  //Abreviaciones de estado?.raceway.v1_vaciado etc. . .
   const r = estado?.raceway;
   const d = estado?.deposito;
   const s = estado?.salida;
@@ -128,7 +133,7 @@ export default function RacewaySchema() {
       {/* Cabecera */}
       <div className="mb-8 text-center">
         <p className={`${lusitana.className} text-3xl font-bold text-white md:text-4xl`}>
-          Esquema del Raceway
+          Gestion del Raceway
         </p>
         <p className="mt-2 text-xs uppercase tracking-widest text-blue-400/70">
           Visualizacion en tiempo real &middot; haz clic en las valvulas para accionarlas
@@ -158,7 +163,7 @@ export default function RacewaySchema() {
           <rect width="780" height="420" fill="#0f172a" rx="12" />
 
           {/* ======== TANQUE RACEWAY (derecha, x=480) ======== */}
-          {/* Estructura tanque */}
+          {/* Estructura tanque --> Rectángulo*/}
           <rect x="480" y="80" width="120" height="160" fill="none" stroke="#334155" strokeWidth="2" rx="4" />
           {/* Agua del tanque */}
           {r && <Agua x={481} y={81} width={118} height={158} nivel={r.nivel_agua} encendido={m?.encendido} />}
@@ -278,9 +283,9 @@ export default function RacewaySchema() {
       {estado && (
         <div className="mt-6 grid w-full max-w-4xl grid-cols-3 gap-4">
           {[
-            { label: 'Raceway', nivel: r?.nivel_agua ?? 0, color: 'bg-blue-600' },
-            { label: 'Deposito CO2/O2', nivel: d?.nivel ?? 0, color: 'bg-purple-600' },
             { label: 'Salida', nivel: s?.nivel ?? 0, color: 'bg-cyan-600' },
+            { label: 'Deposito CO2/O2', nivel: d?.nivel ?? 0, color: 'bg-purple-600' },
+            { label: 'Raceway', nivel: r?.nivel_agua ?? 0, color: 'bg-blue-600' },
           ].map((item) => (
             <div key={item.label} className="rounded-xl border border-blue-800/30 bg-gray-900 p-4">
               <p className="mb-2 text-xs uppercase tracking-widest text-blue-400/70">{item.label}</p>
