@@ -1,4 +1,6 @@
-const BASE_URL = 'http://193.146.35.221:8000';
+//Bateria de pruebas
+const BASE_URL = 'http://localhost:3333'
+// const BASE_URL = 'http://193.146.35.221:8000';
 
 //Fases del motor y válvulas
 export async function fase1(deviceName: string, duration: number) {
