@@ -22,7 +22,7 @@ async function fase2(deviceName: string){
   }
 }
 
-async function fase3(deviceName: string, ){
+async function fase3(deviceName: string){
 
   const response = await fetch(`http://193.146.35.221:8000/devices/${deviceName}/fase3`, {method:'POST'});
 
@@ -31,7 +31,7 @@ async function fase3(deviceName: string, ){
   }
 }
 
-async function fase4(deviceName: string, ){
+async function fase4(deviceName: string){
 
   const response = await fetch(`http://193.146.35.221:8000/devices/${deviceName}/fase4`, {method:'POST'});
 
@@ -40,7 +40,7 @@ async function fase4(deviceName: string, ){
   }
 }
 
-async function fase5(deviceName: string, ){
+async function fase5(deviceName: string){
 
   const response = await fetch(`http://193.146.35.221:8000/devices/${deviceName}/fase5`, {method:'POST'});
 

@@ -1,5 +1,10 @@
 import { useState } from 'react';
 
+//Crear un objeto
+const car = {
+    modelo: "Corola",
+    año: 2009
+};
 
 const app = document.getElementById('app');
 
@@ -32,7 +37,6 @@ function HomePage() {
         </div>
     );
 }
-
 
 const root = ReactDOM.createRoot(app);
 root.render(<HomePage />);
