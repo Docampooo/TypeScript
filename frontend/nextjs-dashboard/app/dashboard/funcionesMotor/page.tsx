@@ -2,15 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { lusitana } from '@/app/ui/fonts';
-import { fase1, fase2, fase3, fase4, fase5 } from '@/app/lib/actions';
+import { fase } from '@/app/lib/actions';
 
-const DEVICE = 'Motor';
+const DEVICE = 'motor';
 const INTERVALO_MS = 1000;
 
 //bateria de pruebas local
-const BASE_URL = 'http://localhost:3333'
-// const BASE_URL = 'http://193.146.35.221:8000';
-
+// const BASE_URL = 'http://localhost:3333'
+const BASE_URL = 'http:localhost:8000';
 
 type FuncionMotor = {
   id: number;
@@ -56,51 +55,7 @@ const motorFunctions: FuncionMotor[] = [
     color: 'from-blue-900 to-blue-700',
     hoverColor: 'hover:from-blue-800 hover:to-blue-600',
     btnColor: 'bg-emerald-500 hover:bg-emerald-400',
-    onClick: () => fase1(DEVICE, 5),
-  },
-  {
-    id: 2,
-    nombre: 'Motor parado, Valvula abierta',
-    descripcion: 'Abre las valvulas de control del sistema hidraulico con el motor parado.',
-    icono: '■',
-    accion: 'Detener',
-    color: 'from-blue-950 to-blue-800',
-    hoverColor: 'hover:from-blue-900 hover:to-blue-700',
-    btnColor: 'bg-red-500 hover:bg-red-400',
-    onClick: () => fase2(DEVICE),
-  },
-  {
-    id: 3,
-    nombre: 'Motor encendido, Valvula abierta',
-    descripcion: 'Abre las valvulas de control del sistema hidraulico para permitir la circulacion completa del flujo y activa el motor.',
-    icono: '◈',
-    accion: 'Abrir',
-    color: 'from-blue-900 to-indigo-800',
-    hoverColor: 'hover:from-blue-800 hover:to-indigo-700',
-    btnColor: 'bg-sky-500 hover:bg-sky-400',
-    onClick: () => fase3(DEVICE),
-  },
-  {
-    id: 4,
-    nombre: 'Cerrar todo',
-    descripcion: 'Cierra todas las valvulas del circuito hidraulico para aislar el sistema y prevenir perdidas.',
-    icono: '◉',
-    accion: 'Cerrar',
-    color: 'from-slate-800 to-blue-900',
-    hoverColor: 'hover:from-slate-700 hover:to-blue-800',
-    btnColor: 'bg-amber-500 hover:bg-amber-400',
-    onClick: () => fase4(DEVICE),
-  },
-  {
-    id: 5,
-    nombre: 'Motor sentido contrario',
-    descripcion: 'El motor ya activo gira en sentido contrario.',
-    icono: '◎',
-    accion: 'Invertir',
-    color: 'from-blue-800 to-cyan-900',
-    hoverColor: 'hover:from-blue-700 hover:to-cyan-800',
-    btnColor: 'bg-blue-400 hover:bg-blue-300',
-    onClick: () => fase5(DEVICE),
+    onClick: () => fase(1),
   },
 ];
 
