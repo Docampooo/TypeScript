@@ -26,7 +26,7 @@ export default function RacewaySVG({ estado, onValvula }: RacewaySVGProps) {
   };
 
   return (
-    <div className='w-full max-w-4xl rounded-2xl border border-blue-800/30 bg-gray-900 p-4 shadow-xl'>
+    <div className='w-full rounded-2xl border border-blue-800/30 bg-gray-900 p-3 shadow-xl'>
       <svg viewBox='0 0 780 420' className='w-full' style={{ fontFamily: 'monospace' }}>
         <rect width='780' height='420' fill='#0f172a' rx='12' />
 
