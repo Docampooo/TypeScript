@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { lusitana } from '@/app/ui/fonts';
-import { fase, type Estado } from '@/app/lib/actions';
+import { fase} from '@/app/lib/actions';
+import { Estado} from '@/app/tipos/raceway';
 
 //Use memo
 //dividir por componente al que se le pasen las constantes con sus propiedades --> descripcion, icono, titulo, funcion etc

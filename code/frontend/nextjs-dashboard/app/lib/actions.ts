@@ -1,47 +1,8 @@
 //Funcinoes de confirmacion de la API en python
 
 const BASE_URL = 'http://localhost:8000';
+import {Estado } from "../tipos/raceway";
 // const BASE_URL = 'http://localhost:3333'
-
-//getter del json que recibe de la api intermedia
-export type Estado = {
-
-  motor: { 
-    encendido: boolean; 
-    forward: boolean; 
-  };
-
-  raceway: { 
-    nivel: number; 
-
-    sensor_minimo: boolean; 
-    sensor_maximo: boolean; 
-
-    valvula_vaciado: boolean; 
-    valvula_llenado: boolean 
-  };
-
-  deposito: { 
-    nivel: number; 
-
-    sensor_minimo: boolean;
-    sensor_maximo: boolean; 
-
-    valvula_vaciado: boolean; 
-    valvula_llenado: boolean 
-  };
-
-  salida: { 
-    nivel: number; 
-
-    sensor_minimo: boolean; 
-    sensor_maximo: boolean; 
-
-    valvula_vaciado: boolean; 
-    valvula_llenado: boolean 
-  };
-
-};
 
 export async function fetchEstado(): Promise<Estado> {
 
