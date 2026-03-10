@@ -6,6 +6,8 @@ import httpx
 from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 
 API_LINUX = 'http://193.146.35.221:8000'
+# API_LINUX = 'http://localhost:8001'
+
 WS_URL = 'ws://193.146.35.221:8000/ws/broadcast'
 
 router = APIRouter()

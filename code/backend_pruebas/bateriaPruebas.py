@@ -1,260 +1,146 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
+import asyncio
+import json
+import httpx
 
-app = FastAPI(title="Raceway API - Pruebas")
+from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# ── Configuracion ─────────────────────────────────────────────────────────────
+# Cambia API_TEST por API_LINUX cuando tengas el servidor listo
+API_TEST  = 'http://localhost:8001'           # bateria de pruebas local
+API_LINUX = 'http://193.146.35.221:8000'      # servidor linux real
+DEVICE    = 'motor'
 
-estado = {
-    "motor": {
-        "encendido": False,
-        "direccion": None
-    },
-    "raceway": {
-        "nivel_agua": 50,
-        "n1_minimo": False,
-        "n2_maximo": False,
-        "v1_vaciado": False,
-        "v2_llenado": False,
-    },
-    "deposito": {
-        "nivel": 50,
-        "n3_minimo": False,
-        "n4_maximo": False,
-        "v3_entrada": False,
-        "v4_salida": False,
-    },
-    "salida": {
-        "nivel": 50,
-        "n5_minimo": False,
-        "n6_maximo": False,
-        "v5_salida": False,
-        "v6_salida": False,
+# Apunta aqui para cambiar entre entornos
+API_BASE = API_TEST
+
+router = APIRouter()
+
+
+# ── Mapeo de campos ───────────────────────────────────────────────────────────
+# La API de pruebas usa nombres distintos a los que espera el frontend
+# Este metodo traduce la respuesta al formato del frontend
+
+def mapear_estado(raw: dict) -> dict:
+    r = raw.get('raceway', {})
+    d = raw.get('deposito', {})
+    s = raw.get('salida', {})
+    m = raw.get('motor', {})
+
+    return {
+        "motor": {
+            "encendido": m.get('encendido', False),
+            "forward":   m.get('direccion') == 'forward',
+        },
+        "raceway": {
+            "nivel":           r.get('nivel_agua', 0),
+            "sensor_minimo":   r.get('n1_minimo', False),
+            "sensor_maximo":   r.get('n2_maximo', False),
+            "valvula_vaciado": r.get('v1_vaciado', False),
+            "valvula_llenado": r.get('v2_llenado', False),
+        },
+        "deposito": {
+            "nivel":           d.get('nivel', 0),
+            "sensor_minimo":   d.get('n3_minimo', False),
+            "sensor_maximo":   d.get('n4_maximo', False),
+            "valvula_vaciado": d.get('v3_entrada', False),
+            "valvula_llenado": d.get('v4_salida', False),
+        },
+        "salida": {
+            "nivel":           s.get('nivel', 0),
+            "sensor_minimo":   s.get('n5_minimo', False),
+            "sensor_maximo":   s.get('n6_maximo', False),
+            "valvula_vaciado": s.get('v5_salida', False),
+            "valvula_llenado": s.get('v6_salida', False),
+        },
     }
-}
 
 
-def actualizar_sensores_raceway():
-    """Comprueba nivel y activa/desactiva valvulas y sensores automaticamente."""
-    nivel = estado["raceway"]["nivel_agua"]
+# ── WebSocket — polling a la API de pruebas ───────────────────────────────────
+# La API de pruebas no tiene WebSocket, asi que hacemos polling cada segundo
+# Cuando cambies a la API Linux real, sustituye por el bridge de websockets
 
-    # Sensor minimo (N1): nivel <= 20%
-    estado["raceway"]["n1_minimo"] = nivel <= 20
-    # Sensor maximo (N2): nivel >= 80%
-    estado["raceway"]["n2_maximo"] = nivel >= 80
+@router.websocket("/ws")
+async def websocket_polling(client_ws: WebSocket):
+    await client_ws.accept()
+    print("[WS] Browser conectado — modo polling")
 
-    # Control automatico: nivel maximo -> abrir vaciado, cerrar llenado
-    if estado["raceway"]["n2_maximo"]:
-        estado["raceway"]["v1_vaciado"] = True
-        estado["raceway"]["v2_llenado"] = False
+    try:
+        async with httpx.AsyncClient() as client:
+            while True:
+                try:
+                    res = await client.get(
+                        f"{API_BASE}/devices/{DEVICE}/status",
+                        timeout=5
+                    )
+                    if res.status_code == 200:
+                        raw = res.json()
+                        mapeado = mapear_estado(raw)
+                        await client_ws.send_json(mapeado)
+                except httpx.HTTPError as e:
+                    print(f"[WS] Error polling: {e}")
 
-    # Control automatico: nivel minimo -> abrir llenado, cerrar vaciado
-    if estado["raceway"]["n1_minimo"]:
-        estado["raceway"]["v2_llenado"] = True
-        estado["raceway"]["v1_vaciado"] = False
+                await asyncio.sleep(1)
 
-
-def actualizar_sensores_deposito():
-    """Comprueba nivel deposito y activa automaticamente valvulas."""
-    nivel = estado["deposito"]["nivel"]
-
-    estado["deposito"]["n3_minimo"] = nivel <= 20
-    estado["deposito"]["n4_maximo"] = nivel >= 80
-
-    if estado["deposito"]["n4_maximo"]:
-        estado["deposito"]["v4_salida"] = True
-        estado["deposito"]["v3_entrada"] = False
-
-    if estado["deposito"]["n3_minimo"]:
-        estado["deposito"]["v3_entrada"] = True
-        estado["deposito"]["v4_salida"] = False
+    except WebSocketDisconnect:
+        print("[WS] Browser desconectado")
 
 
-def actualizar_sensores_salida():
-    """Comprueba nivel salida y activa automaticamente valvulas."""
-    nivel = estado["salida"]["nivel"]
+# ── Fases ─────────────────────────────────────────────────────────────────────
 
-    estado["salida"]["n5_minimo"] = nivel <= 20
-    estado["salida"]["n6_maximo"] = nivel >= 80
+@router.post("/fase{fase}")
+async def activar_fase(fase: str):
+    url = f"{API_BASE}/devices/{DEVICE}/fase{fase}"
+    print(f"[FASE] POST {url}")
 
-    if estado["salida"]["n6_maximo"]:
-        estado["salida"]["v5_salida"] = True
-        estado["salida"]["v6_salida"] = False
+    try:
+        async with httpx.AsyncClient() as client:
+            res = await client.post(url, timeout=30)
+            res.raise_for_status()
+            raw = res.json()
+            # Devuelve el estado ya mapeado
+            if 'estado' in raw:
+                return mapear_estado(raw['estado'])
+            return raw
 
-    if estado["salida"]["n5_minimo"]:
-        estado["salida"]["v6_salida"] = True
-        estado["salida"]["v5_salida"] = False
-
-
-# --- GET ---
-
-@app.get("/devices/{device_name}/status")
-def get_status(device_name: str):
-    # Recalcula sensores en cada consulta
-    actualizar_sensores_raceway()
-    actualizar_sensores_deposito()
-    actualizar_sensores_salida()
-    return estado
-
-
-# --- POST: fases ---
-
-@app.post("/devices/{device_name}/fase1")
-def fase1(device_name: str, duration: int = 5):
-    estado["motor"]["encendido"] = True
-    if estado["motor"]["direccion"] is None:
-        estado["motor"]["direccion"] = "forward"
-    estado["raceway"]["v2_llenado"] = False
-    actualizar_sensores_raceway()
-    return {"ok": True, "mensaje": f"Fase 1 activada en {device_name}", "estado": estado}
-
-@app.post("/devices/{device_name}/fase2")
-def fase2(device_name: str):
-    estado["motor"]["encendido"] = False
-    estado["raceway"]["v2_llenado"] = True
-    estado["raceway"]["v1_vaciado"] = False
-    actualizar_sensores_raceway()
-    return {"ok": True, "mensaje": f"Fase 2 activada en {device_name}", "estado": estado}
-
-@app.post("/devices/{device_name}/fase3")
-def fase3(device_name: str):
-    estado["motor"]["encendido"] = True
-    if estado["motor"]["direccion"] is None:
-        estado["motor"]["direccion"] = "forward"
-    estado["raceway"]["v2_llenado"] = True
-    actualizar_sensores_raceway()
-    return {"ok": True, "mensaje": f"Fase 3 activada en {device_name}", "estado": estado}
-
-@app.post("/devices/{device_name}/fase4")
-def fase4(device_name: str):
-    estado["motor"]["encendido"] = False
-    estado["motor"]["direccion"] = None
-    estado["raceway"]["v1_vaciado"] = False
-    estado["raceway"]["v2_llenado"] = False
-    estado["deposito"]["v3_entrada"] = False
-    estado["deposito"]["v4_salida"] = False
-    estado["salida"]["v5_salida"] = False
-    estado["salida"]["v6_salida"] = False
-    return {"ok": True, "mensaje": f"Fase 4 activada en {device_name}", "estado": estado}
-
-@app.post("/devices/{device_name}/fase5")
-def fase5(device_name: str):
-    estado["motor"]["encendido"] = True
-    if estado["motor"]["direccion"] == "forward" or estado["motor"]["direccion"] is None:
-        estado["motor"]["direccion"] = "backward"
-    else:
-        estado["motor"]["direccion"] = "forward"
-    return {"ok": True, "mensaje": f"Fase 5 activada en {device_name}", "estado": estado}
+    except httpx.ConnectError as e:
+        raise HTTPException(status_code=502, detail=f"No se puede conectar: {str(e)}")
+    except httpx.TimeoutException:
+        raise HTTPException(status_code=504, detail="Timeout")
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=e.response.status_code, detail=e.response.text)
+    except httpx.HTTPError as e:
+        raise HTTPException(status_code=502, detail=str(e))
 
 
-# --- POST: valvulas manuales (con bloqueo por sensor) ---
+# ── Valvulas ──────────────────────────────────────────────────────────────────
 
-@app.post("/devices/{device_name}/v1/open")
-def v1_open(device_name: str):
-    # Bloqueado si sensor minimo activo
-    if estado["raceway"]["n1_minimo"]:
-        raise HTTPException(status_code=403, detail="Bloqueado: nivel minimo alcanzado")
-    estado["raceway"]["v1_vaciado"] = True
-    estado["raceway"]["nivel_agua"] = max(0, estado["raceway"]["nivel_agua"] - 20)
-    actualizar_sensores_raceway()
-    return {"ok": True, "estado": estado}
+@router.post("/{valvula}/{accion}")
+async def accionar_valvula(valvula: str, accion: str):
+    if accion not in ("open", "close"):
+        raise HTTPException(status_code=400, detail="Accion debe ser open o close")
 
-@app.post("/devices/{device_name}/v1/close")
-def v1_close(device_name: str):
-    # Bloqueado si sensor maximo activo (se esta vaciando automaticamente)
-    if estado["raceway"]["n2_maximo"]:
-        raise HTTPException(status_code=403, detail="Bloqueado: vaciado automatico activo")
-    estado["raceway"]["v1_vaciado"] = False
-    actualizar_sensores_raceway()
-    return {"ok": True, "estado": estado}
+    url = f"{API_BASE}/devices/{DEVICE}/{valvula}/{accion}"
+    print(f"[VALVULA] POST {url}")
 
-@app.post("/devices/{device_name}/v2/open")
-def v2_open(device_name: str):
-    # Bloqueado si sensor maximo activo
-    if estado["raceway"]["n2_maximo"]:
-        raise HTTPException(status_code=403, detail="Bloqueado: nivel maximo alcanzado")
-    estado["raceway"]["v2_llenado"] = True
-    estado["raceway"]["nivel_agua"] = min(100, estado["raceway"]["nivel_agua"] + 20)
-    actualizar_sensores_raceway()
-    return {"ok": True, "estado": estado}
+    try:
+        async with httpx.AsyncClient() as client:
+            res = await client.post(url, timeout=10)
+            res.raise_for_status()
+            raw = res.json()
+            if 'estado' in raw:
+                return mapear_estado(raw['estado'])
+            return raw
 
-@app.post("/devices/{device_name}/v2/close")
-def v2_close(device_name: str):
-    if estado["raceway"]["n1_minimo"]:
-        raise HTTPException(status_code=403, detail="Bloqueado: llenado automatico activo")
-    estado["raceway"]["v2_llenado"] = False
-    actualizar_sensores_raceway()
-    return {"ok": True, "estado": estado}
-
-@app.post("/devices/{device_name}/v3/open")
-def v3_open(device_name: str):
-    if estado["deposito"]["n4_maximo"]:
-        raise HTTPException(status_code=403, detail="Bloqueado: nivel maximo deposito")
-    estado["deposito"]["v3_entrada"] = True
-    estado["deposito"]["nivel"] = min(100, estado["deposito"]["nivel"] + 20)
-    actualizar_sensores_deposito()
-    return {"ok": True, "estado": estado}
-
-@app.post("/devices/{device_name}/v3/close")
-def v3_close(device_name: str):
-    if estado["deposito"]["n3_minimo"]:
-        raise HTTPException(status_code=403, detail="Bloqueado: llenado automatico activo")
-    estado["deposito"]["v3_entrada"] = False
-    actualizar_sensores_deposito()
-    return {"ok": True, "estado": estado}
-
-@app.post("/devices/{device_name}/v4/open")
-def v4_open(device_name: str):
-    if estado["deposito"]["n3_minimo"]:
-        raise HTTPException(status_code=403, detail="Bloqueado: nivel minimo deposito")
-    estado["deposito"]["v4_salida"] = True
-    estado["deposito"]["nivel"] = max(0, estado["deposito"]["nivel"] - 20)
-    actualizar_sensores_deposito()
-    return {"ok": True, "estado": estado}
-
-@app.post("/devices/{device_name}/v4/close")
-def v4_close(device_name: str):
-    if estado["deposito"]["n4_maximo"]:
-        raise HTTPException(status_code=403, detail="Bloqueado: vaciado automatico activo")
-    estado["deposito"]["v4_salida"] = False
-    actualizar_sensores_deposito()
-    return {"ok": True, "estado": estado}
-
-@app.post("/devices/{device_name}/v5/open")
-def v5_open(device_name: str):
-    if estado["salida"]["n5_minimo"]:
-        raise HTTPException(status_code=403, detail="Bloqueado: nivel minimo salida")
-    estado["salida"]["v5_salida"] = True
-    estado["salida"]["nivel"] = max(0, estado["salida"]["nivel"] - 20)
-    actualizar_sensores_salida()
-    return {"ok": True, "estado": estado}
-
-@app.post("/devices/{device_name}/v5/close")
-def v5_close(device_name: str):
-    if estado["salida"]["n6_maximo"]:
-        raise HTTPException(status_code=403, detail="Bloqueado: vaciado automatico activo")
-    estado["salida"]["v5_salida"] = False
-    actualizar_sensores_salida()
-    return {"ok": True, "estado": estado}
-
-@app.post("/devices/{device_name}/v6/open")
-def v6_open(device_name: str):
-    if estado["salida"]["n6_maximo"]:
-        raise HTTPException(status_code=403, detail="Bloqueado: nivel maximo salida")
-    estado["salida"]["v6_salida"] = True
-    estado["salida"]["nivel"] = min(100, estado["salida"]["nivel"] + 20)
-    actualizar_sensores_salida()
-    return {"ok": True, "estado": estado}
-
-@app.post("/devices/{device_name}/v6/close")
-def v6_close(device_name: str):
-    if estado["salida"]["n5_minimo"]:
-        raise HTTPException(status_code=403, detail="Bloqueado: llenado automatico activo")
-    estado["salida"]["v6_salida"] = False
-    actualizar_sensores_salida()
-    return {"ok": True, "estado": estado}
+    except httpx.ConnectError as e:
+        raise HTTPException(status_code=502, detail=f"No se puede conectar: {str(e)}")
+    except httpx.TimeoutException:
+        raise HTTPException(status_code=504, detail="Timeout")
+    except httpx.HTTPStatusError as e:
+        # Reenvía el mensaje de bloqueo de la API de pruebas al frontend
+        try:
+            detail = e.response.json().get('detail', e.response.text)
+        except Exception:
+            detail = e.response.text
+        raise HTTPException(status_code=e.response.status_code, detail=detail)
+    except httpx.HTTPError as e:
+        raise HTTPException(status_code=502, detail=str(e))

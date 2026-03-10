@@ -1,4 +1,4 @@
-//La función Valvula
+// ValvulaSVG — válvula abierta en algae, cerrada en rojo
 
 type ValvulaProps = {
   x: number;
@@ -10,8 +10,12 @@ type ValvulaProps = {
 };
 
 export default function ValvulaSVG({ x, y, abierta, label, onClick, bloqueada = false }: ValvulaProps) {
-  const color = bloqueada ? '#64748b' : abierta ? '#22c55e' : '#ef4444';
+  // abierta  → algae-500 / algae-600
+  // cerrada  → rojo
+  // bloqueada → slate gris
+  const color  = bloqueada ? '#64748b' : abierta ? '#22c55e' : '#ef4444';
   const stroke = bloqueada ? '#475569' : abierta ? '#16a34a' : '#dc2626';
+
   return (
     <g
       onClick={bloqueada ? undefined : onClick}

@@ -46,44 +46,43 @@ export default function Page() {
     }
   };
 
-  // Mostrar skeleton hasta que llegue el primer dato
   if (!estado && !errorEstado) return <PageSkeleton />;
 
   return (
-    <main className="min-h-screen bg-gray-950 px-4 py-8">
+    <main className="min-h-screen bg-white px-4 py-8">
       <div className="mx-auto max-w-5xl">
 
         {/* ── Encabezado ── */}
-        <div className="mb-5 text-center">
-          <p className={`${lusitana.className} text-2xl font-bold text-white md:text-3xl`}>
+        <div className="mb-6 text-center">
+          <p className={`${lusitana.className} text-4xl font-bold text-blue-700 md:text-5xl`}>
             Gestion del Raceway
           </p>
-          <p className="mt-1 text-xs uppercase tracking-widest text-blue-400/70">
+          <p className="mt-3 text-sm uppercase tracking-widest text-gray-400">
             Visualizacion en tiempo real · haz clic en las valvulas para accionarlas
           </p>
           {ultimaActualizacion && (
-            <p className="mt-0.5 text-xs text-blue-700">Actualizado: {ultimaActualizacion}</p>
+            <p className="mt-1 text-sm text-gray-400">Actualizado: {ultimaActualizacion}</p>
           )}
         </div>
 
         {/* ── Mensajes ── */}
         {errorEstado && (
-          <div className="mb-3 rounded-xl border border-red-800 bg-red-950/50 px-4 py-2 text-center text-xs text-red-400">
+          <div className="mb-3 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-center text-sm text-red-500">
             {errorEstado}
           </div>
         )}
         {mensajeBloqueo && (
-          <div className="mb-3 rounded-xl border border-amber-700 bg-amber-950/50 px-4 py-2 text-center text-xs text-amber-400">
+          <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2 text-center text-sm text-amber-600">
             Accion bloqueada: {mensajeBloqueo}
           </div>
         )}
 
         {/* ── Leyenda ── */}
-        <div className="mb-3 flex flex-wrap justify-center gap-4 text-xs text-slate-400">
-          <span className="flex items-center gap-1.5"><span className="inline-block h-2.5 w-2.5 rounded-full bg-emerald-500" /> Valvula abierta</span>
-          <span className="flex items-center gap-1.5"><span className="inline-block h-2.5 w-2.5 rounded-full bg-red-500" /> Valvula cerrada</span>
-          <span className="flex items-center gap-1.5"><span className="inline-block h-2.5 w-2.5 rounded-full bg-slate-500 opacity-50" /> Valvula bloqueada</span>
-          <span className="flex items-center gap-1.5"><span className="inline-block h-2.5 w-2.5 rounded-full bg-amber-400" /> Sensor activo</span>
+        <div className="mb-4 flex flex-wrap justify-center gap-5 text-sm text-gray-500">
+          <span className="flex items-center gap-2"><span className="inline-block h-3 w-3 rounded-full bg-algae-500" /> Valvula abierta</span>
+          <span className="flex items-center gap-2"><span className="inline-block h-3 w-3 rounded-full bg-red-400" /> Valvula cerrada</span>
+          <span className="flex items-center gap-2"><span className="inline-block h-3 w-3 rounded-full bg-gray-300" /> Valvula bloqueada</span>
+          <span className="flex items-center gap-2"><span className="inline-block h-3 w-3 rounded-full bg-algae-400" /> Sensor activo</span>
         </div>
 
         {/* ── SVG + Estado ── */}
@@ -104,16 +103,16 @@ export default function Page() {
         {estado && (
           <div className="mt-3 grid grid-cols-3 gap-3">
             {[
-              { label: 'Salida', nivel: estado.salida?.nivel ?? 0, color: 'bg-cyan-600' },
-              { label: 'Deposito CO2/O2', nivel: estado.deposito?.nivel ?? 0, color: 'bg-purple-600' },
-              { label: 'Raceway', nivel: estado.raceway?.nivel ?? 0, color: 'bg-blue-600' },
+              { label: 'Salida',          nivel: estado.salida?.nivel   ?? 0, color: 'bg-sky-500' },
+              { label: 'Deposito CO2/O2', nivel: estado.deposito?.nivel ?? 0, color: 'bg-purple-400' },
+              { label: 'Raceway',         nivel: estado.raceway?.nivel  ?? 0, color: 'bg-algae-500' },
             ].map((item) => (
-              <div key={item.label} className="rounded-xl border border-blue-800/30 bg-gray-900 p-3">
-                <p className="mb-1.5 text-xs uppercase tracking-widest text-blue-400/70">{item.label}</p>
-                <div className="h-1.5 w-full rounded-full bg-gray-800">
+              <div key={item.label} className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
+                <p className="mb-1.5 text-xs uppercase tracking-widest text-gray-400">{item.label}</p>
+                <div className="h-1.5 w-full rounded-full bg-gray-100">
                   <div className={`h-1.5 rounded-full ${item.color} transition-all duration-700`} style={{ width: `${item.nivel}%` }} />
                 </div>
-                <p className="mt-1 text-right text-xs font-bold text-white">{item.nivel}%</p>
+                <p className="mt-1 text-right text-xs font-bold text-gray-700">{item.nivel}%</p>
               </div>
             ))}
           </div>
@@ -134,17 +133,18 @@ export default function Page() {
           ))}
         </div>
 
-        <div className="my-8 h-px w-full bg-gradient-to-r from-transparent via-blue-800 to-transparent opacity-40" />
+        {/* ── Divisor ── */}
+        <div className="my-8 h-px w-full bg-gray-200" />
 
         {/* ── Tarjetas info fases ── */}
         <div className="mb-6 text-center">
-          <p className={`${lusitana.className} text-xl font-bold text-white`}>
+          <p className={`${lusitana.className} text-3xl font-bold text-blue-700`}>
             Descripcion de las Fases
           </p>
-          <p className="mt-1 text-xs uppercase tracking-widest text-blue-400/70">
+          <p className="mt-2 text-sm uppercase tracking-widest text-gray-400">
             Utilidades y aplicaciones practicas
           </p>
-          <div className="mx-auto mt-2 h-px w-16 bg-blue-500 opacity-60" />
+          <div className="mx-auto mt-3 h-px w-16 bg-blue-200" />
         </div>
 
         <div className="space-y-4">
