@@ -92,14 +92,14 @@ export default function EstadoSistema({ estado, error, ultimaActualizacion }: Es
 
             {/* ── Válvula llenado raceway ── */}
             <div className={`relative overflow-hidden rounded-xl border-l-4 p-3 ${
-              estado.raceway.valvula_llenado
+              estado.dep_raceway.valvula_llenado
                 ? 'border-sky-400 bg-sky-50'
                 : 'border-amber-400 bg-amber-50'
             }`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className={`flex h-8 w-8 items-center justify-center rounded-lg text-lg ${
-                    estado.raceway.valvula_llenado
+                    estado.dep_raceway.valvula_llenado
                       ? 'bg-sky-100 ring-1 ring-sky-300'
                       : 'bg-amber-100 ring-1 ring-amber-300'
                   }`}>
@@ -108,14 +108,14 @@ export default function EstadoSistema({ estado, error, ultimaActualizacion }: Es
                   <p className={`${lusitana.className} text-xs font-bold text-gray-800`}>V. Llenado</p>
                 </div>
                 <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${
-                  estado.raceway.valvula_llenado
+                  estado.dep_raceway.valvula_llenado
                     ? 'bg-sky-100 text-sky-700'
                     : 'bg-amber-100 text-amber-700'
                 }`}>
                   <span className={`h-1.5 w-1.5 rounded-full ${
-                    estado.raceway.valvula_llenado ? 'bg-sky-400 animate-pulse' : 'bg-amber-400'
+                    estado.dep_raceway.valvula_llenado ? 'bg-sky-400 animate-pulse' : 'bg-amber-400'
                   }`} />
-                  {estado.raceway.valvula_llenado ? 'ABIERTA' : 'CERRADA'}
+                  {estado.dep_raceway.valvula_llenado ? 'ABIERTA' : 'CERRADA'}
                 </span>
               </div>
             </div>

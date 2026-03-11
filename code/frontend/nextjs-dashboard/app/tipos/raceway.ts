@@ -4,15 +4,12 @@ export type MetricFileName =
   | 'detailed_df_t1.json';
 
 export type Deposito = {
-
   nivel: number;
-
   sensor_minimo: boolean;
   sensor_maximo: boolean;
-
   valvula_vaciado: boolean;
-  valvula_llenado: boolean
-}
+  valvula_llenado: boolean;
+};
 
 export type Estado = {
 
@@ -21,11 +18,11 @@ export type Estado = {
     forward: boolean;
   };
 
-  raceway: Deposito
+  dep_raceway: Deposito   // Depósito conectado al canal oval
 
-  deposito: Deposito
+  dep_cultivo: Deposito   // Depósito de cultivo (trapezoidal)
 
-  salida: Deposito
+  dep_cosecha: Deposito   // Depósito de cosecha
 
 };
 

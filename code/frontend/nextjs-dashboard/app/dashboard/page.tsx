@@ -103,9 +103,9 @@ export default function Page() {
         {estado && (
           <div className="mt-3 grid grid-cols-3 gap-3">
             {[
-              { label: 'Salida',          nivel: estado.salida?.nivel   ?? 0, color: 'bg-sky-500' },
-              { label: 'Deposito CO2/O2', nivel: estado.deposito?.nivel ?? 0, color: 'bg-purple-400' },
-              { label: 'Raceway',         nivel: estado.raceway?.nivel  ?? 0, color: 'bg-algae-500' },
+              { label: 'Salida',          nivel: estado.dep_cosecha?.nivel   ?? 0, color: 'bg-sky-500' },
+              { label: 'Deposito CO2/O2', nivel: estado.dep_cultivo?.nivel ?? 0, color: 'bg-purple-400' },
+              { label: 'Raceway',         nivel: estado.dep_raceway?.nivel  ?? 0, color: 'bg-algae-500' },
             ].map((item) => (
               <div key={item.label} className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
                 <p className="mb-1.5 text-xs uppercase tracking-widest text-gray-400">{item.label}</p>
