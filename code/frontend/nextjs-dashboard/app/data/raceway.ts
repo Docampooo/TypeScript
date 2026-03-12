@@ -54,7 +54,7 @@ export const motorFunctions: FuncionMotor[] = [
     descripcion: 'Activa el sistema de bombeo principal del raceway.',
     icono: '▶',
     accion: 'Iniciar',
-    color: 'from-blue-800 to-blue-700',       // más oscuro
+    color: 'from-blue-800 to-blue-700',
     hoverColor: '',
     btnColor: 'bg-blue-600 hover:bg-blue-500',
     onClick: () => fase(true, true),
@@ -76,7 +76,7 @@ export const motorFunctions: FuncionMotor[] = [
     descripcion: 'El motor gira en sentido contrario.',
     icono: '◎',
     accion: 'Invertir',
-    color: 'from-sky-500 to-sky-400',         // más claro
+    color: 'from-sky-500 to-sky-400',
     hoverColor: '',
     btnColor: 'bg-sky-400 hover:bg-sky-300',
     onClick: () => fase(true, false),

@@ -11,7 +11,7 @@ type EstadoSistemaProps = {
 
 export default function EstadoSistema({ estado, error, ultimaActualizacion }: EstadoSistemaProps) {
   return (
-    <aside className="w-full lg:w-56 xl:w-64 lg:shrink-0 lg:sticky lg:top-6">
+    <aside className="w-full">
       <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4 shadow-sm">
 
         {/* ── Cabecera ── */}

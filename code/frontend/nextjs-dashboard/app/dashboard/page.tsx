@@ -1,5 +1,10 @@
 'use client';
 
+//TODOS
+//1 --> Boton tomar muestras y boton muestras automaticas por tiempo
+//2 --> Mostrar los estados en el sistema
+//3 --> get y post time settings
+
 import { useState } from 'react';
 import { lusitana } from '@/app/ui/fonts';
 import { FuncionMotor } from '@/app/tipos/raceway';
@@ -11,6 +16,8 @@ import FuncionInfoCard from '@/app/ui/dashboard/racewayCircuito/FuncionInfoCard'
 import EstadoSistema from '@/app/ui/dashboard/racewayCircuito/EstadoSistema';
 import RacewaySVG from '@/app/ui/dashboard/racewayCircuito/RacewaySVG';
 import PageSkeleton from '@/app/ui/dashboard/racewayCircuito/pageskeleton';
+import TimeSettingsPanel from '@/app/ui/dashboard/racewayCircuito/Timesettingspanel';
+
 
 export default function Page() {
 
@@ -90,12 +97,13 @@ export default function Page() {
           <div className="min-w-0 flex-1">
             <RacewaySVG estado={estado} onValvula={handleValvula} />
           </div>
-          <div className="w-56 shrink-0">
+          <div className="w-56 shrink-0 space-y-3">
             <EstadoSistema
               estado={estado}
               error={null}
               ultimaActualizacion={ultimaActualizacion}
             />
+            <TimeSettingsPanel/>
           </div>
         </div>
 

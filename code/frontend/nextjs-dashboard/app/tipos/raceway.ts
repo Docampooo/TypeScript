@@ -61,3 +61,14 @@ export type NivelItem = {
   nivel: number;
   color: string;
 };
+
+export type DepositoTiempos = {
+  valvula_llenado: number; // 30–120 segundos
+  valvula_vaciado: number; // 30–120 segundos
+};
+ 
+export type TimeSettings = {
+  dep_raceway: DepositoTiempos;
+  dep_cultivo:  DepositoTiempos;
+  dep_cosecha:  DepositoTiempos;
+};
