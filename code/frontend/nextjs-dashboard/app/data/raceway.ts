@@ -1,145 +1,110 @@
-import { fase } from '@/app/lib/actions';
-import { FuncionMotor, FuncionOverview } from '@/app/tipos/raceway';
+import { FuncionOverview } from '@/app/tipos/raceway';
 
-// ─── Overview ────────────────────────────────────────────────────────────────
+// ─── Stats ────────────────────────────────────────────────────────────────────
 
 export const stats = [
-  { valor: '5', label: 'Modos de operacion' },
+  { valor: '6', label: 'Valvulas controladas' },
+  { valor: '5', label: 'Sensores de nivel' },
   { valor: '24/7', label: 'Monitoreo continuo' },
-  { valor: '100%', label: 'Control remoto' },
   { valor: 'IoT', label: 'Conectividad en tiempo real' },
 ];
 
-export const funciones: FuncionOverview[] = [
+// ─── Fase 1 — Dep. Raceway ────────────────────────────────────────────────────
+
+export const fase1Info: FuncionOverview[] = [
   {
     id: 1,
-    titulo: 'Iniciar Motor',
-    utilidad: 'Pone en marcha el sistema de bombeo principal, iniciando la circulacion activa del agua a traves del canal del raceway.',
-    aplicaciones: ['Inicio de jornada de cultivo', 'Reinicio tras mantenimiento', 'Activacion del ciclo de oxigenacion'],
-    icono: '▶',
+    titulo: 'V1 — Llenado del Deposito Raceway',
+    utilidad: 'Abre la entrada de agua al deposito del raceway. El sensor maximo N2 bloquea automaticamente la valvula cuando el deposito esta lleno para evitar desbordamientos.',
+    aplicaciones: ['Inicio del ciclo hidraulico', 'Reposicion de agua evaporada', 'Preparacion del medio de cultivo'],
+    icono: '💧',
     gradiente: 'from-blue-50 to-sky-50',
     acento: 'border-blue-700',
     tag: 'bg-blue-100 text-blue-700',
   },
   {
     id: 2,
-    titulo: 'Cerrar todo',
-    utilidad: 'Cierre completo del sistema hidraulico. Aisla el circuito para prevenir perdidas y proteger los componentes mecanicos.',
-    aplicaciones: ['Parada de emergencia', 'Mantenimiento programado', 'Inspeccion del sistema'],
-    icono: '◉',
-    gradiente: 'from-sky-50 to-blue-50',
-    acento: 'border-amber-400',
-    tag: 'bg-amber-50 text-amber-700',
+    titulo: 'Vaciado Manual',
+    utilidad: 'El deposito del raceway no dispone de valvula de vaciado automatica. El vaciado se realiza de forma manual directamente sobre el deposito fisico cuando sea necesario.',
+    aplicaciones: ['Mantenimiento del deposito', 'Limpieza periodica', 'Cambio de agua del sistema'],
+    icono: '🔧',
+    gradiente: 'from-slate-50 to-gray-50',
+    acento: 'border-gray-400',
+    tag: 'bg-gray-100 text-gray-600',
+  },
+];
+
+// ─── Fase 2 — Dep. Cultivo ────────────────────────────────────────────────────
+
+export const fase2Info: FuncionOverview[] = [
+  {
+    id: 1,
+    titulo: 'V2 — Llenado del Deposito de Cultivo',
+    utilidad: 'Transfiere el contenido del deposito del raceway al deposito de cultivo. Inicia el proceso de preparacion del medio con microalgas.',
+    aplicaciones: ['Carga del medio de cultivo', 'Inicio del ciclo de enriquecimiento', 'Transferencia de biomasa'],
+    icono: '🔄',
+    gradiente: 'from-blue-50 to-sky-50',
+    acento: 'border-blue-600',
+    tag: 'bg-blue-100 text-blue-700',
   },
   {
-    id: 3,
-    titulo: 'Direccion Opuesta',
-    utilidad: 'Invierte el sentido del flujo en el canal. Util para limpiezas profundas y uniformidad del cultivo a lo largo del raceway.',
-    aplicaciones: ['Limpieza profunda del canal', 'Distribucion uniforme de nutrientes', 'Prevencion de sedimentos'],
-    icono: '◎',
+    id: 2,
+    titulo: 'V3 — Inyeccion de Gases O₂ + CO₂',
+    utilidad: 'Introduce una mezcla de oxigeno y dioxido de carbono en el deposito de cultivo. El CO₂ actua como fuente de carbono para la fotosintesis y el O₂ favorece la oxigenacion del medio.',
+    aplicaciones: ['Enriquecimiento del medio de cultivo', 'Estimulacion del crecimiento de microalgas', 'Control de pH mediante CO₂'],
+    icono: '💨',
     gradiente: 'from-sky-50 to-cyan-50',
-    acento: 'border-sky-400',
-    tag: 'bg-sky-100 text-sky-600',
-  },
-];
-
-// ─── Funciones Toma de Muestras (info cards) ──────────────────────────────────
-
-export const muestraFunciones: FuncionOverview[] = [
-  {
-    id: 1,
-    titulo: 'Recoger Muestra',
-    utilidad: 'Extrae una muestra puntual del cultivo de microalgas directamente desde el raceway. Permite analizar el estado del cultivo en un momento determinado.',
-    aplicaciones: ['Control de densidad celular', 'Analisis de calidad del cultivo', 'Seguimiento del crecimiento de microalgas'],
-    icono: '🧪',
-    gradiente: 'from-green-50 to-emerald-50',
-    acento: 'border-green-600',
-    tag: 'bg-green-100 text-green-700',
-  },
-  {
-    id: 2,
-    titulo: 'Recogida Automatica',
-    utilidad: 'Programa tomas de muestra automaticas a intervalos regulares de tiempo. El sistema ejecuta la recogida de forma autonoma sin necesidad de intervencion manual.',
-    aplicaciones: ['Monitoreo continuo del cultivo', 'Registro periodico de datos', 'Deteccion temprana de anomalias en el crecimiento'],
-    icono: '⏱',
-    gradiente: 'from-emerald-50 to-teal-50',
-    acento: 'border-emerald-500',
-    tag: 'bg-emerald-100 text-emerald-700',
-  },
-];
-
-// ─── Funciones Motor ──────────────────────────────────────────────────────────
-
-export const motorFunctions: FuncionMotor[] = [
-  {
-    id: 1,
-    nombre: 'Iniciar Motor',
-    descripcion: 'Activa el sistema de bombeo principal del raceway.',
-    icono: '▶',
-    accion: 'Iniciar',
-    color: 'from-blue-800 to-blue-700',
-    hoverColor: '',
-    btnColor: 'bg-blue-600 hover:bg-blue-500',
-    onClick: () => fase(true, true),
-  },
-  {
-    id: 2,
-    nombre: 'Cerrar todo',
-    descripcion: 'Cierra todas las valvulas del circuito.',
-    icono: '◉',
-    accion: 'Cerrar',
-    color: 'from-sky-600 to-sky-500',
-    hoverColor: '',
-    btnColor: 'bg-amber-500 hover:bg-amber-400',
-    onClick: () => fase(false, true),
+    acento: 'border-sky-500',
+    tag: 'bg-sky-100 text-sky-700',
   },
   {
     id: 3,
-    nombre: 'Motor sentido contrario',
-    descripcion: 'El motor gira en sentido contrario.',
-    icono: '◎',
-    accion: 'Invertir',
-    color: 'from-sky-500 to-sky-400',
-    hoverColor: '',
-    btnColor: 'bg-sky-400 hover:bg-sky-300',
-    onClick: () => fase(true, false),
+    titulo: 'V4 — Transferencia al Raceway',
+    utilidad: 'Vuelca el contenido del deposito de cultivo — agua, microalgas y gases disueltos — directamente al canal del raceway para iniciar o continuar el ciclo de produccion.',
+    aplicaciones: ['Inoculacion del raceway', 'Reposicion de biomasa', 'Inicio del ciclo de produccion'],
+    icono: '➡',
+    gradiente: 'from-cyan-50 to-teal-50',
+    acento: 'border-cyan-500',
+    tag: 'bg-cyan-100 text-cyan-700',
   },
-];
-
-// ─── Funciones Muestras ───────────────────────────────────────────────────────
-
-export const muestraFunctions: FuncionMotor[] = [
   {
     id: 4,
-    nombre: 'Tomar Muestra',
-    descripcion: 'Extrae una muestra puntual del cultivo en el raceway.',
-    icono: '🧪',
-    accion: 'Tomar',
-    color: 'from-green-700 to-green-600',
-    hoverColor: '',
-    btnColor: 'bg-green-500 hover:bg-green-400',
-    onClick: async () => { /* pendiente */ },
+    titulo: 'V5 — Vaciado Exterior',
+    utilidad: 'Drena el contenido del deposito de cultivo hacia el exterior del sistema. Se utiliza para limpiezas, purgas o cuando el cultivo no es apto para transferir al raceway.',
+    aplicaciones: ['Purga del sistema', 'Eliminacion de cultivo contaminado', 'Limpieza del deposito'],
+    icono: '🚰',
+    gradiente: 'from-teal-50 to-emerald-50',
+    acento: 'border-teal-500',
+    tag: 'bg-teal-100 text-teal-700',
+  },
+];
+
+// ─── Fase 3 — Dep. Cosecha ────────────────────────────────────────────────────
+
+export const fase3Info: FuncionOverview[] = [
+  {
+    id: 1,
+    titulo: 'V6 — Llenado del Deposito de Cosecha',
+    utilidad: 'Transfiere el contenido del deposito de cultivo al deposito de cosecha para su procesado final. El sensor maximo N5 bloquea la valvula cuando el deposito esta lleno.',
+    aplicaciones: ['Recogida de biomasa de microalgas', 'Inicio del proceso de cosecha', 'Separacion del cultivo para analisis'],
+    icono: '🌿',
+    gradiente: 'from-emerald-50 to-green-50',
+    acento: 'border-emerald-600',
+    tag: 'bg-emerald-100 text-emerald-700',
   },
   {
-    id: 5,
-    nombre: 'Muestra por Tiempo',
-    descripcion: 'Programa tomas de muestra automaticas a intervalos regulares.',
-    icono: '⏱',
-    accion: 'Programar',
-    color: 'from-green-500 to-green-400',
-    hoverColor: '',
-    btnColor: 'bg-green-400 hover:bg-green-300',
-    onClick: async () => { /* pendiente */ },
+    id: 2,
+    titulo: 'Vaciado Manual',
+    utilidad: 'El deposito de cosecha no dispone de valvula de vaciado automatica. Una vez recogida la biomasa, el vaciado y limpieza del deposito se realiza manualmente.',
+    aplicaciones: ['Extraccion de la biomasa cosechada', 'Limpieza del deposito tras cosecha', 'Preparacion para el siguiente ciclo'],
+    icono: '🔧',
+    gradiente: 'from-slate-50 to-gray-50',
+    acento: 'border-gray-400',
+    tag: 'bg-gray-100 text-gray-600',
   },
 ];
 
-// ─── Niveles y leyenda ────────────────────────────────────────────────────────
-
-export const nivelesConfig = [
-  { label: 'Salida',          color: 'bg-sky-500' },
-  { label: 'Deposito CO2/O2', color: 'bg-purple-400' },
-  { label: 'Raceway',         color: 'bg-algae-500' },
-];
+// ─── Leyenda ──────────────────────────────────────────────────────────────────
 
 export const leyendaValvulas = [
   { color: 'bg-algae-500', texto: 'Valvula abierta' },

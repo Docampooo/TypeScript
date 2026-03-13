@@ -65,19 +65,6 @@ export default function EstadoSistema({ estado, error }: EstadoSistemaProps) {
                   {estado.motor.encendido ? 'ON' : 'OFF'}
                 </span>
               </div>
-              {estado.motor.encendido && (
-                <div className="mt-2 flex items-center gap-2 rounded-lg bg-white/80 px-2 py-1.5 border border-gray-100">
-                  <span className="text-sm">
-                    {estado.motor.forward === true ? '➡' : '⬅'}
-                  </span>
-                  <div>
-                    <p className="text-xs uppercase tracking-widest text-gray-400">Direccion</p>
-                    <p className="text-xs font-semibold text-gray-700">
-                      {estado.motor.forward === true ? 'Avance' : 'Retroceso'}
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
 
           </div>

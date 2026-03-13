@@ -1,21 +1,35 @@
 // ─── Depósitos ────────────────────────────────────────────────────────────────
 
-export type Deposito = {
+export type Dep_raceway = {
   nivel: number;
   sensor_minimo: boolean;
   sensor_maximo: boolean;
-  valvula_vaciado: boolean;
-  valvula_llenado: boolean;
+  valvula_llenado: boolean;            // V1
+};
+
+export type Dep_cultivo = {
+  nivel: number;
+  sensor_minimo: boolean;
+  sensor_maximo: boolean;
+  valvula_llenado: boolean;            // V2
+  valvula_gas: boolean;                // V3 — gases O₂+CO₂
+  valvula_llenado_raceway: boolean;    // V4 — vuelca contenido al raceway
+  valvula_vaciado: boolean;            // V5 — vaciado exterior
+};
+
+export type Dep_cosecha = {
+  nivel: number;
+  sensor_maximo: boolean;
+  valvula_llenado: boolean;            // V6
 };
 
 export type Estado = {
   motor: {
     encendido: boolean;
-    forward: boolean;
   };
-  dep_raceway: Deposito;
-  dep_cultivo:  Deposito;
-  dep_cosecha:  Deposito;
+  dep_raceway: Dep_raceway;
+  dep_cultivo:  Dep_cultivo;
+  dep_cosecha:  Dep_cosecha;
 };
 
 // ─── Time Settings ────────────────────────────────────────────────────────────
